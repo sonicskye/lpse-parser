@@ -25,6 +25,6 @@ The result will be recorded in `results` folder in csv format.
 
 ## NOTE
 
-I am not responsible to any damage to the server due to the exessive requests sent from the script.
+I am not responsible to any damage to the server due to the excessive requests sent from the script.
 
 
