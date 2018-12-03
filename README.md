@@ -1,5 +1,5 @@
 # LPSE Parser
-LPSE Parser is - as reflected by its name - a data parser for LPSE websites
+LPSE Parser - as reflected by its name - is a data parser for LPSE websites
 
 Developed for KPP Pratama Kotabumi.
 
