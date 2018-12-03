@@ -9,7 +9,7 @@ staticCode = "121"
 # lowNum is the lowest number
 # highNum is the highest number to query
 lowNum = 7300
-highNum = 7400
+highNum = 7320
 
 frontURL = "https://lpse." + govName + ".go.id/eproc4/lelang/"
 pengumumanLelangURL = "/pengumumanlelang"
