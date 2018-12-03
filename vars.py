@@ -11,7 +11,8 @@ staticCode = "121"
 lowNum = 7300
 highNum = 7320
 
-frontURL = "https://lpse." + govName + ".go.id/eproc4/lelang/"
+menuLelangURL = "https://lpse." + govName + ".go.id/eproc4/lelang/"
+menuEvaluasiURL = "https://lpse." + govName + ".go.id/eproc4/evaluasi/"
 pengumumanLelangURL = "/pengumumanlelang"
 pesertaURL = "/peserta"
 hasilURL = "/hasil"

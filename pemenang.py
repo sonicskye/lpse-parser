@@ -1,8 +1,8 @@
 '''
 sonicskye @2018
 
-pengumumanlelang.py is used to parse pengumumanlelang page in LPSE website
-it stores class pengumumanlelang
+pemenang.py is used to parse pemenang page in LPSE website
+it stores class pemenang
 
 
 '''
@@ -15,21 +15,20 @@ import csv
 from pathlib import Path
 
 
-class pengumumanlelang:
+class pemenang:
 
-    _HEADERPREFERRED = ["Kode Tender", "Nama Tender", "Tanggal Pembuatan", "Tahap Tender Saat ini", "Instansi",
-                           "Satuan Kerja", "Kategori", "Sistem Pengadaan", "Tahun Anggaran", "Nilai Pagu Paket",
-                           "Nilai HPS Paket", "Peserta Tender"]
+    _HEADERPREFERRED = ["Kode Tender", "Nama Tender", "Kategori", "Instansi", "Satker", "Pagu", "HPS",
+                        "Nama Pemenang", "Alamat", "NPWP", "Harga Penawaran"]
 
     def generateurl(self, num):
-        completeURL = v.menuLelangURL + str(num) + v.staticCode + v.pengumumanLelangURL
+        completeURL = v.menuEvaluasiURL + str(num) + v.staticCode + v.pemenangURL
         return completeURL
 
     def generatecontent(self, url):
         page = u.getcontent(url)
         return page
 
-    def parsepage(self, page):
+    def parsepage(self, page, num):
         # https://medium.freecodecamp.org/how-to-scrape-websites-with-python-and-beautifulsoup-5946935d93fe
         soup = BeautifulSoup(page, 'html.parser')
 
@@ -38,18 +37,25 @@ class pengumumanlelang:
         tdList = []
         thTemp = []
         tdTemp = []
+
+        kodeTenderTempHeader = []
+        kodeTenderTempData = []
+        kodeTenderTempHeader.append("Kode Tender")
+        kodeTenderTempData.append(str(num) + v.staticCode)
+        thList.append(kodeTenderTempHeader)
+        tdList.append(kodeTenderTempData)
+
         for tr in soup.find_all('tr'):
             # process the header cell
             ths = tr.find_all('th')
             thTemp2 = []
             for th in ths:
                 thText = th.text.strip()
-                # Jenis Kontrak is hard to handle. Exclude for now
-                if thText != "" and thText != "Jenis Kontrak":
+                #print(thText)
+                if thText != "":
                     thTemp2.append(thText)
             if len(thTemp2) != 0:
                 thTemp = thTemp2
-
 
             #process the data cell
             tds = tr.find_all('td')
@@ -62,31 +68,50 @@ class pengumumanlelang:
                 tdTemp = tdTemp2
                 thList.append(thTemp)
                 tdList.append(tdTemp)
+                #print(len(thList), len(tdList))
 
                 for i in range(0,len(thTemp)-1):
                     header = thTemp[i]
                     dat = tdTemp[i]
+                    #print (header, repr(dat))
+        # cleanup unwanted data
+        thList.pop(-2)
+        tdList.pop(-2)
 
-        # write to a csv file, named pengumumanlelang.csv
+        # now we serialize the last data
+        thLast = thList.pop(-1)
+        tdLast = tdList.pop(-1)
+        for i in range(0, len(thLast)):
+            tempList = []
+            tempList.append(thLast[i])
+            thList.append(tempList)
+
+        for i in range(0, len(tdLast)):
+            tempList2 = []
+            tempList2.append(tdLast[i])
+            tdList.append(tempList2)
+
+        # write to a csv file, named pemenang.csv
         # https://realpython.com/python-csv/
-        filename: str = "results/pengumumanlelang" + "-" + v.govName + ".csv"
+        filename: str = "results/pemenang" + "-" + v.govName + ".csv"
 
         # write the header
         # check whether the file exists
         # https://stackoverflow.com/questions/82831/how-do-i-check-whether-a-file-exists-without-exceptions
+
         checkFile = Path(filename)
         if not checkFile.is_file():
             # file does not exist
-            with open(filename, mode='w') as pengumumanlelangfile:
-                pengumumanlelangwriter = csv.writer(pengumumanlelangfile, delimiter=',')
-                pengumumanlelangwriter.writerow(self._HEADERPREFERRED)
+            with open(filename, mode='w') as pemenangfile:
+                pemenangwriter = csv.writer(pemenangfile, delimiter=',')
+                pemenangwriter.writerow(self._HEADERPREFERRED)
 
         # @ToDo do not allow duplicates
         # https://stackoverflow.com/questions/15741564/removing-duplicate-rows-from-a-csv-file-using-a-python-script
 
         # write the data
-        with open(filename, mode='a') as pengumumanlelangfile:
-            pengumumanlelangwriter = csv.writer(pengumumanlelangfile, delimiter=',')
+        with open(filename, mode='a') as pemenangfile:
+            pemenangwriter = csv.writer(pemenangfile, delimiter=',')
             dataAkhir = []
             for i in range (0, len(thList)):
                 daftarHeader = thList[i]
@@ -97,7 +122,8 @@ class pengumumanlelang:
                         # keep the \\n inside the data string
                         data = repr(daftarData[j])
                         dataAkhir.append(data)
-            pengumumanlelangwriter.writerow(dataAkhir)
+            pemenangwriter.writerow(dataAkhir)
+
 
     def iterate(self, lowNum, highNum):
         # iterating from lowNum to highNum
@@ -107,7 +133,7 @@ class pengumumanlelang:
             # if 404 not found then do not process anything
             try:
                 page = self.generatecontent(url)
-                self.parsepage(page)
+                self.parsepage(page, i)
             except:
-                print("Page not found or Error has happened")
+                print ("Page not found or Error has happened")
                 continue
