@@ -57,7 +57,7 @@ class pemenang:
             if len(thTemp2) != 0:
                 thTemp = thTemp2
 
-            #process the data cell
+            # process the data cell
             tds = tr.find_all('td')
             tdTemp2 = []
             for td in tds:
@@ -68,12 +68,10 @@ class pemenang:
                 tdTemp = tdTemp2
                 thList.append(thTemp)
                 tdList.append(tdTemp)
-                #print(len(thList), len(tdList))
 
                 for i in range(0,len(thTemp)-1):
                     header = thTemp[i]
                     dat = tdTemp[i]
-                    #print (header, repr(dat))
         # cleanup unwanted data
         thList.pop(-2)
         tdList.pop(-2)
@@ -113,7 +111,7 @@ class pemenang:
         with open(filename, mode='a') as pemenangfile:
             pemenangwriter = csv.writer(pemenangfile, delimiter=',')
             dataAkhir = []
-            for i in range (0, len(thList)):
+            for i in range(0, len(thList)):
                 daftarHeader = thList[i]
                 daftarData = tdList[i]
                 for j in range(0, len(daftarHeader)):
@@ -123,7 +121,6 @@ class pemenang:
                         data = repr(daftarData[j])
                         dataAkhir.append(data)
             pemenangwriter.writerow(dataAkhir)
-
 
     def iterate(self, lowNum, highNum):
         # iterating from lowNum to highNum
@@ -135,5 +132,5 @@ class pemenang:
                 page = self.generatecontent(url)
                 self.parsepage(page, i)
             except:
-                print ("Page not found or Error has happened")
+                print("Page not found or Error has happened")
                 continue
